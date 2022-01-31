@@ -7,6 +7,11 @@ export interface Option {
   disabled?: boolean;
 }
 
+export interface ILoadOptionsReturn{
+  options: Option[],
+  hasMore: boolean
+}
+
 export interface ISelectProps {
   options: Option[];
   value: Option[];
@@ -34,4 +39,5 @@ export interface ISelectProps {
   isOpen?: boolean;
   isCreatable?: boolean;
   onCreateOption?;
+  loadOptions:()=> Promise< ILoadOptionsReturn >
 }

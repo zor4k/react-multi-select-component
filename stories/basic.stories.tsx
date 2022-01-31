@@ -9,6 +9,24 @@ export default {
   decorators: [withKnobs],
 };
 
+
+let prevIndex = 0;
+const loadOptions = async () =>{
+  const offset = 20;
+
+  /*if(prevIndex < options.length){
+
+  }*/
+
+  const startSlice = prevIndex;
+  const endSlice = prevIndex+ offset;
+  prevIndex+= offset; 
+
+  return  {
+    options : options.slice(startSlice, endSlice),
+    hasMore : prevIndex > options.length ? true : false
+  }
+}
 export const ExampleDefault = () => {
   const [selected, setSelected] = useState([]);
 
@@ -17,6 +35,7 @@ export const ExampleDefault = () => {
       <pre>{JSON.stringify(selected)}</pre>
       <MultiSelect
         options={options}
+        loadOptions={loadOptions}
         hasSelectAll={boolean("hasSelectAll", true)}
         isLoading={boolean("isLoading", false)}
         shouldToggleOnHover={boolean("shouldToggleOnHover", false)}

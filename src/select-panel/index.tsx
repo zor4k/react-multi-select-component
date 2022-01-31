@@ -4,6 +4,7 @@
  * Select-all item, and the list of options.
  */
 import React, {
+  SetStateAction,
   useCallback,
   useEffect,
   useMemo,
@@ -16,6 +17,7 @@ import { useMultiSelect } from "../hooks/use-multi-select";
 import { KEY } from "../lib/constants";
 import { debounce } from "../lib/debounce";
 import { filterOptions } from "../lib/fuzzy-match-utils";
+import { Option } from "../lib/interfaces";
 import { Cross } from "./cross";
 import SelectItem from "./select-item";
 import SelectList from "./select-list";
@@ -41,14 +43,25 @@ const SelectPanel = () => {
     debounceDuration,
     isCreatable,
     onCreateOption,
+    loadOptions
   } = useMultiSelect();
 
   const listRef = useRef<any>();
   const searchInputRef = useRef<any>();
   const [searchText, setSearchText] = useState("");
-  const [filteredOptions, setFilteredOptions] = useState(options);
+  const [filteredOptions, setFilteredOptions]: [Array<Option> , any] = useState([]);
   const [searchTextForFilter, setSearchTextForFilter] = useState("");
   const [focusIndex, setFocusIndex] = useState(0);
+  const [hasMore , setHasMore] = useState(false);
+
+  useEffect( ()=>{
+    loadOptions().then( returnValues => {
+      setFilteredOptions(returnValues.options);
+      setHasMore(returnValues.hasMore);
+    });
+
+  },[]);
+
   const debouncedSearch = useCallback(
     debounce((query) => setSearchTextForFilter(query), debounceDuration),
     []
@@ -174,6 +187,21 @@ const SelectPanel = () => {
     getFilteredOptions().then(setFilteredOptions);
   }, [searchTextForFilter, options]);
 
+  const onScroll = async ()=>{
+    const elements = document.getElementsByClassName("options");
+    const element = elements[0];
+
+    if(element.scrollHeight - Math.abs(element.scrollTop) === element.clientHeight){
+      if(hasMore){
+
+        const loadOptionsObj = await loadOptions();
+        setOptions(options.concat(loadOptionsObj.options));
+      }
+    }
+
+
+  }
+
   return (
     <div className="select-panel" role="listbox" ref={listRef}>
       {!disableSearch && (
@@ -200,7 +228,7 @@ const SelectPanel = () => {
         </div>
       )}
 
-      <ul className="options">
+      <ul className="options" onScroll={onScroll} >
         {hasSelectAll && hasSelectableOptions && (
           <SelectItem
             tabIndex={skipIndex === 1 ? 0 : 1}

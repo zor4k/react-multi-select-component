@@ -8,4 +8,13 @@ export const options = [
   { label: "Tangerine 🍊", value: "tangerine" },
   { label: "Pineapple 🍍", value: "pineapple" },
   { label: "Peach 🍑", value: "peach" },
+  { label: "BlueBeery", value: "blueberry" },
+  { label: "Chocolate", value: "chocolate" },
+  { label: "EggPlant", value: "eggplant", disabled: true },
+  { label: "Carrot", value: "carrot" },
+  { label: "Cabbage", value: "cabbage" },
+  { label: "Green Pepper", value: "green pepper" },
+  { label: "Orange", value: "Orange" },
+  { label: "Rasberry", value: "Rasberry" },
+  { label: "Banana", value: "banana" },
 ];
