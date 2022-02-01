@@ -1,4 +1,4 @@
-export const options = [
+/*[
   { label: "Grapes 🍇", value: "grapes" },
   { label: "Mango 🥭", value: "mango" },
   { label: "Strawberry 🍓", value: "strawberry", disabled: true },
@@ -17,4 +17,11 @@ export const options = [
   { label: "Orange", value: "Orange" },
   { label: "Rasberry", value: "Rasberry" },
   { label: "Banana", value: "banana" },
-];
+];*/
+import {Option } from '../src/lib/interfaces'
+let returnOptions : Array<Option>= [];
+for(let i =0 ; i<2000; i++){
+  returnOptions.push({ label: `${i}`, value:`${i}`})  
+}
+
+export const options = returnOptions;

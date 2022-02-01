@@ -12,7 +12,7 @@ export default {
 
 let prevIndex = 0;
 const loadOptions = async () =>{
-  const offset = 20;
+  const offset = 100;
 
   /*if(prevIndex < options.length){
 
@@ -24,7 +24,7 @@ const loadOptions = async () =>{
 
   return  {
     options : options.slice(startSlice, endSlice),
-    hasMore : prevIndex > options.length ? true : false
+    hasMore : endSlice < options.length
   }
 }
 export const ExampleDefault = () => {
@@ -34,7 +34,7 @@ export const ExampleDefault = () => {
     <div>
       <pre>{JSON.stringify(selected)}</pre>
       <MultiSelect
-        options={options}
+        //options={options}
         loadOptions={loadOptions}
         hasSelectAll={boolean("hasSelectAll", true)}
         isLoading={boolean("isLoading", false)}

@@ -19,12 +19,15 @@ const defaultProps: Partial<ISelectProps> = {
   hasSelectAll: true,
   className: "multi-select",
   debounceDuration: 200,
-  options: [] as Option[],
+  //options: [] as Option[],
 };
 
 interface MultiSelectContextProps extends ISelectProps {
   t: (key: string) => string;
   setOptions?;
+  hasMore: boolean;
+  setHasMore: (hasMore: boolean) => void;
+  options: Array<Option> 
 }
 
 interface MultiSelectProviderProps {
@@ -40,16 +43,32 @@ export const MultiSelectProvider = ({
   props,
   children,
 }: MultiSelectProviderProps) => {
-  const [options, setOptions] = useState(props.options);
+  const [options, setOptions] : [Array<Option>, any]= useState([]);
+  const [hasMore , setHasMore] : [boolean, any] = useState(false);
   const t = (key) => props.overrideStrings?.[key] || defaultStrings[key];
 
+  /*useEffect(() => {
+    props.loadOptions().then( (returnVal )=> {
+      setOptions(returnVal.options); setHasMore(returnVal.hasMore);
+      console.log("setting options to:")
+      console.log(returnVal.options)
+    })
+  }, [props.loadOptions]);*/
+
   useEffect(() => {
-    setOptions(props.options);
-  }, [props.options]);
+    props.loadOptions().then( (returnVal )=> {
+      setOptions(returnVal.options);
+      setHasMore(returnVal.hasMore);
+      console.log("setting options to:")
+      console.log(returnVal.options);
+
+      console.log("hasMore: "+ returnVal.hasMore);
+    })
+  }, []);
 
   return (
     <MultiSelectContext.Provider
-      value={{ t, ...defaultProps, ...props, options, setOptions }}
+      value={{ t, ...defaultProps, ...props, options, setOptions, hasMore, setHasMore  }}
     >
       {children}
     </MultiSelectContext.Provider>

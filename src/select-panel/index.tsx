@@ -31,7 +31,7 @@ const SelectPanel = () => {
   const {
     t,
     onChange,
-    options,
+    //options,
     setOptions,
     value,
     filterOptions: customFilterOptions,
@@ -43,24 +43,29 @@ const SelectPanel = () => {
     debounceDuration,
     isCreatable,
     onCreateOption,
-    loadOptions
+    loadOptions,
+    hasMore,
+    setHasMore
   } = useMultiSelect();
 
   const listRef = useRef<any>();
   const searchInputRef = useRef<any>();
   const [searchText, setSearchText] = useState("");
-  const [filteredOptions, setFilteredOptions]: [Array<Option> , any] = useState([]);
+  const [filteredOptions, setFilteredOptions]: [Array<Option> , any] = useState(options);
   const [searchTextForFilter, setSearchTextForFilter] = useState("");
   const [focusIndex, setFocusIndex] = useState(0);
-  const [hasMore , setHasMore] = useState(false);
-
-  useEffect( ()=>{
+  /*useEffect( ()=>{
     loadOptions().then( returnValues => {
-      setFilteredOptions(returnValues.options);
+
+      //setFilteredOptions(returnValues.options);
       setHasMore(returnValues.hasMore);
+
+      options = returnValues.options;
+      console.log("compDidMount: change\n========\nOptions: "+options+"\n=======\n\n");
+      console.log("My component did mount");
     });
 
-  },[]);
+  },[]);*/
 
   const debouncedSearch = useCallback(
     debounce((query) => setSearchTextForFilter(query), debounceDuration),
@@ -183,20 +188,24 @@ const SelectPanel = () => {
     // eslint-disable-next-line
   }, [filteredOptions, value]);
 
+ 
   useEffect(() => {
     getFilteredOptions().then(setFilteredOptions);
   }, [searchTextForFilter, options]);
+ 
 
-  const onScroll = async ()=>{
-    const elements = document.getElementsByClassName("options");
-    const element = elements[0];
+  const handleScroll = async (e)=>{
 
-    if(element.scrollHeight - Math.abs(element.scrollTop) === element.clientHeight){
+    const bottom = Math.round((e.target.scrollHeight - Math.abs(e.target.scrollTop))) === e.target.clientHeight;
+
+    if(bottom){
       if(hasMore){
-
+        console.log('it has more!');
         const loadOptionsObj = await loadOptions();
         setOptions(options.concat(loadOptionsObj.options));
+        setHasMore(loadOptionsObj.hasMore);
       }
+
     }
 
 
@@ -228,7 +237,7 @@ const SelectPanel = () => {
         </div>
       )}
 
-      <ul className="options" onScroll={onScroll} >
+      <ul className="options" onScroll={handleScroll} >
         {hasSelectAll && hasSelectableOptions && (
           <SelectItem
             tabIndex={skipIndex === 1 ? 0 : 1}
